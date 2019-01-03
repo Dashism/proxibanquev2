@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Component;
+
 import fr.formation.proxi.metier.entity.Account;
 
 /**
@@ -14,6 +16,7 @@ import fr.formation.proxi.metier.entity.Account;
  * @author Adminl
  *
  */
+@Component
 public class AccountDao extends AbstractDao<Account> {
 	
 	private static final AccountDao INSTANCE = new AccountDao();

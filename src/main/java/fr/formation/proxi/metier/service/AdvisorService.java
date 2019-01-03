@@ -2,28 +2,18 @@ package fr.formation.proxi.metier.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import fr.formation.proxi.metier.entity.Advisor;
 import fr.formation.proxi.metier.entity.Client;
 import fr.formation.proxi.persistance.AdvisorDao;
 
+@Service
 public class AdvisorService {
 
-	private static final AdvisorService INSTANCE = new AdvisorService();
-
-	/**
-	 * Retourne le singleton de la classe.
-	 * 
-	 * @return Le singleton.
-	 */
-	public static AdvisorService getInstance() {
-		return AdvisorService.INSTANCE;
-	}
-
+	@Autowired
 	private AdvisorDao daoAdvisor;
-
-	public AdvisorService() {
-		this.daoAdvisor = AdvisorDao.getInstance();
-	}
 
 	/**
 	 * Méthode à implémenter.

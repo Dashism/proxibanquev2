@@ -28,7 +28,7 @@ public class TransferServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private AccountService accS = AccountService.getInstance();
+//	private AccountService accS = AccountService.getInstance();
 
 	/**
 	 * Methode permettant d'acceder a� la page de transfer. Recupere l'id dy
@@ -39,17 +39,17 @@ public class TransferServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		Integer id = Integer.parseInt(req.getParameter("id"));
-		Client client = ClientService.getInstance().read(id);
-		List<Account> accounts = this.accS.getAll(id);
-		if (accounts.size() <= 1) {
-			req.setAttribute("client", client);
-			req.getServletContext().getRequestDispatcher("/WEB-INF/views/error_transfer.jsp").forward(req, resp);
-		} else {
-			req.setAttribute("accounts", accounts);
-			req.setAttribute("client", client);
-			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer.jsp").forward(req, resp);
-		}
+//		Integer id = Integer.parseInt(req.getParameter("id"));
+//		Client client = ClientService.getInstance().read(id);
+//		List<Account> accounts = this.accS.getAll(id);
+//		if (accounts.size() <= 1) {
+//			req.setAttribute("client", client);
+//			req.getServletContext().getRequestDispatcher("/WEB-INF/views/error_transfer.jsp").forward(req, resp);
+//		} else {
+//			req.setAttribute("accounts", accounts);
+//			req.setAttribute("client", client);
+//			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer.jsp").forward(req, resp);
+//		}
 	}
 
 	/**
@@ -60,18 +60,18 @@ public class TransferServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Integer compteCredite = Integer.parseInt(req.getParameter("compteACrediter"));
-		Integer compteDebite = Integer.parseInt(req.getParameter("compteADebiter"));
-		Integer clientId = Integer.parseInt(req.getParameter("id"));
-		Float val = Float.parseFloat(req.getParameter("value"));
-
-		Boolean transferOK = ClientService.getInstance().transfer(val, compteDebite, compteCredite, clientId);
-
-		if (!transferOK) {
-			req.setAttribute("transferRate", transferOK);
-			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer.jsp").forward(req, resp);
-		} else {
-			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer_OK.jsp").forward(req, resp);
-		}
+//		Integer compteCredite = Integer.parseInt(req.getParameter("compteACrediter"));
+//		Integer compteDebite = Integer.parseInt(req.getParameter("compteADebiter"));
+//		Integer clientId = Integer.parseInt(req.getParameter("id"));
+//		Float val = Float.parseFloat(req.getParameter("value"));
+//
+//		Boolean transferOK = ClientService.getInstance().transfer(val, compteDebite, compteCredite, clientId);
+//
+//		if (!transferOK) {
+//			req.setAttribute("transferRate", transferOK);
+//			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer.jsp").forward(req, resp);
+//		} else {
+//			this.getServletContext().getRequestDispatcher("/WEB-INF/views/transfer_OK.jsp").forward(req, resp);
+//		}
 	}
 }

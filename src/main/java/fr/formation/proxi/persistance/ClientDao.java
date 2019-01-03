@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Component;
+
 import fr.formation.proxi.metier.entity.Client;
 
 /**
@@ -14,6 +16,7 @@ import fr.formation.proxi.metier.entity.Client;
  * @author Adminl
  *
  */
+@Component
 public class ClientDao extends AbstractDao<Client> {
 
 	private static final ClientDao INSTANCE = new ClientDao();

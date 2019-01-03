@@ -56,7 +56,7 @@
 			<button class="button">Valider</button>
 			<button type="reset" class="button">Réinitialiser</button>
 			<a href="index.html">
-				<button class="button">Retour à l'accueil</button>
+				<button type="button" class="button">Retour à l'accueil</button>
 			</a>
 		</div>
 		</form>

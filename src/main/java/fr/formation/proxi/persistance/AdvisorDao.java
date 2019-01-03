@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Component;
+
 import fr.formation.proxi.metier.entity.Advisor;
 
+@Component
 public class AdvisorDao extends AbstractDao<Advisor> {
 
 	private static final AdvisorDao INSTANCE = new AdvisorDao();

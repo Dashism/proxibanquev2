@@ -18,6 +18,6 @@ div.advisor>a {
 	<!-- Utilisation de HttpSession ou l'attribut "advisor"
 		a été rempli depuis IndexServlet -->
 	<h4>Bonjour, ${sessionScope.advisor}</h4>
-	<c:url var="logoutUrl" value="/logout" />
+	<c:url var="logoutUrl" value="/logout.html" />
 	<a href="${logoutUrl}">Se déconnecter</a>
 </div>
