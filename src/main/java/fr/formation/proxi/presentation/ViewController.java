@@ -15,9 +15,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import fr.formation.proxi.ProxiConstants;
 import fr.formation.proxi.metier.entity.Account;
+import fr.formation.proxi.metier.entity.BankCard;
 import fr.formation.proxi.metier.entity.Client;
 import fr.formation.proxi.metier.service.AccountService;
 import fr.formation.proxi.metier.service.AdvisorService;
+import fr.formation.proxi.metier.service.BankCardService;
 import fr.formation.proxi.metier.service.ClientService;
 
 @Controller
@@ -34,6 +36,9 @@ public class ViewController {
 	
 	@Autowired
 	private ClientService clientService;
+	
+	@Autowired
+	private BankCardService bankCardService;
 
 	@RequestMapping({ "", "index" })
 	public ModelAndView index(HttpServletRequest request) {
@@ -124,6 +129,32 @@ public class ViewController {
 			mav.setViewName("transfer_OK");
 		}
 		return mav;
+	}
+	
+	@RequestMapping("card")
+	public ModelAndView showCardClient(Integer id) {
+		ModelAndView mav = new ModelAndView("card");
+		Client client = this.clientService.read(id);
+		mav.addObject("client", client);
+		return mav;
+	}
+	
+	@RequestMapping(path="card", method=RequestMethod.POST)
+	public String validateCardClient(Integer id, String number, String type) {
+		BankCard newCard = this.bankCardService.create(number, type);
+		Client client = this.clientService.read(id);
+		client.setCard(newCard);
+		this.clientService.update(client);
+		return ProxiConstants.REDIRECT_TO_INDEX;
+	}
+	
+	@RequestMapping("delete_card")
+	public String deleteCardClient(Integer id) {
+		Client client = this.clientService.read(id);
+		client.setCard(null);
+		this.clientService.update(client);
+		this.bankCardService.delete(id);
+		return ProxiConstants.REDIRECT_TO_INDEX;
 	}
 
 	/**
