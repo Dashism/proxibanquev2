@@ -1,56 +1,19 @@
 package fr.formation.proxi.persistance;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-
-import org.springframework.stereotype.Component;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import fr.formation.proxi.metier.entity.Advisor;
 
-@Component
-public class AdvisorDao extends AbstractDao<Advisor> {
-
-	private static final AdvisorDao INSTANCE = new AdvisorDao();
-
-	public static AdvisorDao getInstance() {
-		return AdvisorDao.INSTANCE;
-	}
-
-	@Override
-	public Advisor read(Integer id) {
-		return this.read(id, new Advisor());
-	}
-
-	@Override
-	public List<Advisor> readAll() {
-		List<Advisor> advisors = new ArrayList<>();
-		TypedQuery<Advisor> query = this.em
-				.createQuery(JpqlQueries.SELECT_ALL_ADVISOR, Advisor.class);
-		advisors.addAll(query.getResultList());
-		return advisors;
-	}
+@Repository
+public interface AdvisorDao extends JpaRepository<Advisor, Integer> {
 
 	/**
-	 * Méthode à implémenter avec une requête JPQL comportant un paramètre.
+	 * Déclaration d'une requête JPQL générée par Spring avec les reste des
+	 * méthodes de JpaRepository.
 	 * 
-	 * ATTENTION !! Les paramètres des requêtes JPQL ont un fonctionnement
-	 * particulier (pas de String.format et de %s). <br>
-	 * <a href=
-	 * "https://www.objectdb.com/java/jpa/query/parameter#Named_Parameters_:name_">Lien
-	 * vers la documentation des paramètres de requête pour JPQL</a>
-	 * 
-	 * @param username le nom d'utilisateur (login) du conseiller.
-	 * @return Integer l'identifiant du conseiller trouvée.
+	 * @param username le nom recherché.
+	 * @return Advisor le conseiller si trouvé sinon null.
 	 */
-	public Integer readIdByName(String username) {
-		Integer result = null;
-		TypedQuery<Advisor> query = this.em.createQuery(
-				JpqlQueries.SELECT_ADVISOR_BY_NAME, Advisor.class);
-		query.setParameter("username", username);
-		result = query.getSingleResult().getId();
-		return result;
-	}
-
+	Advisor findByUsername(String username);
 }

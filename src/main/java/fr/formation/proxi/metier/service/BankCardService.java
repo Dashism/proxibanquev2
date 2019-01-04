@@ -13,10 +13,10 @@ public class BankCardService {
 	private BankCardDao daoCard;
 
 	public BankCard create(String number, String type) {
-		return this.daoCard.create(new BankCard(number, type));
+		return this.daoCard.save(new BankCard(number, type));
 	}
 
 	public void delete(Integer id) {
-		this.daoCard.delete(id);
+		this.daoCard.deleteById(id);
 	}
 }

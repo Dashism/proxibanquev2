@@ -27,7 +27,7 @@ public class AccountService {
 	public List<Account> getAll(Integer idClient) {
 		List<Account> accounts = new ArrayList<>();
 
-		accounts = this.clientDao.read(idClient).getAccounts();
+		accounts = this.clientDao.getOne(idClient).getAccounts();
 
 		return accounts;
 
@@ -37,7 +37,7 @@ public class AccountService {
 		List<Account> SavingAccounts = new ArrayList<>();
 
 		List<Account> accounts = new ArrayList<>();
-		accounts = this.clientDao.read(idClient).getAccounts();
+		accounts = this.clientDao.getOne(idClient).getAccounts();
 
 		for (Account account : accounts) {
 			if (account instanceof SavingsAccount) {
@@ -51,7 +51,7 @@ public class AccountService {
 		List<Account> CurrentAccounts = new ArrayList<>();
 
 		List<Account> accounts = new ArrayList<>();
-		accounts = this.clientDao.read(idClient).getAccounts();
+		accounts = this.clientDao.getOne(idClient).getAccounts();
 
 		for (Account account : accounts) {
 			if (account instanceof CurrentAccount) {

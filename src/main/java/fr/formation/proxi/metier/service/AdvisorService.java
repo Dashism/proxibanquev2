@@ -22,7 +22,7 @@ public class AdvisorService {
 	 * @return List<Client> la liste des clients du conseiller demandé.
 	 */
 	public List<Client> getClientsByAdvisorId(Integer id) {
-		Advisor advisor = this.daoAdvisor.read(id);
+		Advisor advisor = this.daoAdvisor.getOne(id);
 		return advisor.getClients();
 	}
 
@@ -33,6 +33,6 @@ public class AdvisorService {
 	 * @return Integer l'identifiant du conseiller trouvée.
 	 */
 	public Integer getAdvisorIdByName(String username) {
-		return this.daoAdvisor.readIdByName(username);
+		return this.daoAdvisor.findByUsername(username).getId();
 	}
 }

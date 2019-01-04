@@ -27,13 +27,13 @@ public class ClientService {
 	private AccountDao daoAccount;
 
 	public List<Client> getAll() {
-		return this.daoClient.readAll();
+		return this.daoClient.findAll();
 	}
 
 	public boolean transfer(Float value, Integer debitId, Integer creditId,
 			Integer clientId) {
 		boolean transferOK = true;
-		Client client = this.daoClient.read(clientId);
+		Client client = this.daoClient.getOne(clientId);
 		Account compteDebite = client.getAccountById(debitId);
 		Account compteCredite = client.getAccountById(creditId);
 		if (compteDebite.getId() == compteCredite.getId()) {
@@ -43,21 +43,21 @@ public class ClientService {
 			return transferOK;
 		} else {
 			compteCredite.setBalance(compteCredite.getBalance() + value);
-			this.daoAccount.update(compteCredite);
+			this.daoAccount.save(compteCredite);
 
 			compteDebite.setBalance(compteDebite.getBalance() - value);
-			this.daoAccount.update(compteDebite);
+			this.daoAccount.save(compteDebite);
 
 			return transferOK;
 		}
 	}
 
 	public Client read(Integer id) {
-		return this.daoClient.read(id);
+		return this.daoClient.getOne(id);
 	}
 
 	public void update(Client client) {
-		this.daoClient.update(client);
+		this.daoClient.save(client);
 	}
 
 	public void setDaoClient(ClientDao daoClient) {

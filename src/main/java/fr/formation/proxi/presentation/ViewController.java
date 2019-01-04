@@ -6,8 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.support.SessionStatus;
@@ -24,19 +26,20 @@ import fr.formation.proxi.metier.service.ClientService;
 
 @Controller
 @RequestMapping("/")
+@Transactional(readOnly = true)
 public class ViewController {
 
 	private static final Logger LOGGER = Logger.getLogger(ViewController.class);
-	
+
 	@Autowired
 	private AdvisorService advisorService;
-	
+
 	@Autowired
 	private AccountService accountService;
-	
+
 	@Autowired
 	private ClientService clientService;
-	
+
 	@Autowired
 	private BankCardService bankCardService;
 
@@ -62,21 +65,24 @@ public class ViewController {
 		}
 		String advisorName = request.getUserPrincipal().getName();
 		Integer advisorId = this.advisorService.getAdvisorIdByName(advisorName);
-		List<Client> clients = this.advisorService.getClientsByAdvisorId(advisorId);
-
+		List<Client> clients = this.advisorService
+				.getClientsByAdvisorId(advisorId);
+		Hibernate.initialize(clients);
 		request.setAttribute("clients", clients);
 		LOGGER.info("Liste des clients chargée");
 		return mav;
 	}
-	
+
 	@RequestMapping("modify")
 	public ModelAndView showEditClient(Integer id) {
 		ModelAndView mav = new ModelAndView("editor");
-		mav.addObject("client", this.clientService.read(id));
+		Client client = this.clientService.read(id);
+		Hibernate.initialize(client);
+		mav.addObject("client", client);
 		return mav;
 	}
-	
-	@RequestMapping(path="modify", method=RequestMethod.POST)
+
+	@RequestMapping(path = "modify", method = RequestMethod.POST)
 	public ModelAndView validateEditClient(Client client) {
 		ModelAndView mav = new ModelAndView("edit_OK");
 		Client clientBdd = this.clientService.read(client.getId());
@@ -85,27 +91,33 @@ public class ViewController {
 		this.clientService.update(client);
 		return mav;
 	}
-	
+
 	@RequestMapping("account")
 	public ModelAndView showAccountsClient(Integer id) {
 		ModelAndView mav = new ModelAndView("account");
-		List<Account> currentAccounts= this.accountService.getAllCurrentAccounts(id);
-		List<Account> savingAccounts= this.accountService.getAllSavingAccounts(id);
+		List<Account> currentAccounts = this.accountService
+				.getAllCurrentAccounts(id);
+		List<Account> savingAccounts = this.accountService
+				.getAllSavingAccounts(id);
 		Client client = this.clientService.read(id);
-		
-		mav.addObject("currentAccounts",currentAccounts);
-		mav.addObject("savingAccounts",savingAccounts);
-		mav.addObject("id",id);
-		mav.addObject("client",client);
-		LOGGER.info("Comptes du client " + client.getLastname() + " " + client.getFirstname() + " chargés");
+//		Hibernate.initialize(client);
+		mav.addObject("currentAccounts", currentAccounts);
+		mav.addObject("savingAccounts", savingAccounts);
+		mav.addObject("id", id);
+		mav.addObject("client", client);
+		LOGGER.info("Comptes du client " + client.getLastname() + " "
+				+ client.getFirstname() + " chargés");
 		return mav;
 	}
-	
+
 	@RequestMapping("transfer")
 	public ModelAndView showTransferClient(Integer id) {
 		ModelAndView mav = new ModelAndView();
 		Client client = this.clientService.read(id);
+		Hibernate.initialize(client);
 		List<Account> accounts = this.accountService.getAll(id);
+		// Le proxy accounts sera initialisé par l'appel à la méthode size()
+		// ci-dessous : pas besoin de Hibernate.initialize(accounts).
 		if (accounts.size() <= 1) {
 			mav.addObject("client", client);
 			mav.setViewName("error_transfer");
@@ -116,11 +128,13 @@ public class ViewController {
 		}
 		return mav;
 	}
-	
-	@RequestMapping(path="transfer", method=RequestMethod.POST)
-	public ModelAndView showTransferClient(Float value, Integer compteADebiter, Integer compteACrediter, Integer id) {
+
+	@RequestMapping(path = "transfer", method = RequestMethod.POST)
+	public ModelAndView showTransferClient(Float value, Integer compteADebiter,
+			Integer compteACrediter, Integer id) {
 		ModelAndView mav = new ModelAndView();
-		Boolean transferOK = this.clientService.transfer(value, compteADebiter, compteACrediter, id);
+		Boolean transferOK = this.clientService.transfer(value, compteADebiter,
+				compteACrediter, id);
 
 		if (!transferOK) {
 			mav.addObject("transferRate", transferOK);
@@ -130,16 +144,17 @@ public class ViewController {
 		}
 		return mav;
 	}
-	
+
 	@RequestMapping("card")
 	public ModelAndView showCardClient(Integer id) {
 		ModelAndView mav = new ModelAndView("card");
 		Client client = this.clientService.read(id);
+		Hibernate.initialize(client);
 		mav.addObject("client", client);
 		return mav;
 	}
-	
-	@RequestMapping(path="card", method=RequestMethod.POST)
+
+	@RequestMapping(path = "card", method = RequestMethod.POST)
 	public String validateCardClient(Integer id, String number, String type) {
 		BankCard newCard = this.bankCardService.create(number, type);
 		Client client = this.clientService.read(id);
@@ -147,13 +162,14 @@ public class ViewController {
 		this.clientService.update(client);
 		return ProxiConstants.REDIRECT_TO_INDEX;
 	}
-	
+
 	@RequestMapping("delete_card")
 	public String deleteCardClient(Integer id) {
 		Client client = this.clientService.read(id);
+		Integer cardId = client.getCard().getId();
 		client.setCard(null);
 		this.clientService.update(client);
-		this.bankCardService.delete(id);
+		this.bankCardService.delete(cardId);
 		return ProxiConstants.REDIRECT_TO_INDEX;
 	}
 
